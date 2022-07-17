@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 import pickle
-import numpy
+import numpy as np
 
 model = pickle.load(open('model.pkl', 'rb'))
 
@@ -12,12 +12,25 @@ def home():
 
 @app.route('/predict', methods=['POST'])
 def predict():
+    Age = request.form.get('Age')
+    Gender = request.form.get('Gender')
+    Married = request.form.get('Married')
+    Housing = request.form.get('Housing')
+    Dependents = request.form.get('Dependents')
+    Education = request.form.get('Education')
+    Income = request.form.get('Income')
+    LoanAmount = request.form.get('LoanAmount')
+    LoanDuration = request.form.get('LoanDuration')
+    PropertyArea = request.form.get('PropertyArea')
+    BusinessIdea = request.form.get('BusinessIdea')
+    UnpaidLoan = request.form.get('UnpaidLoan')
+    BusinessExp = request.form.get('BusinessExp')
 
-    result = model.predict([[12, 0 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])[0]
-    if result == 1:
-        return jsonify('Yes')
-    else:
-        return jsonify("No")
+    input_query = np.array([[Age, Gender, Married, Housing, Dependents, Education, Income, LoanAmount, LoanDuration, PropertyArea, BusinessIdea, UnpaidLoan, BusinessExp]])
+
+    result = model.predict(input_query)[0]
+
+    return jsonify({'placement': str(result)})
 
 if __name__ == '__main__':
     app.run(debug=True)
